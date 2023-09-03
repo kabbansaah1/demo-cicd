@@ -31,10 +31,8 @@ jobs:
         
         # build, tag, and push to ECR
         - name: Build, tag, and push image to Amazon ECR
-          env:
-            REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-            REPOSITORY: app_repo
-            IMAGE_TAG: latest, ${{ github.run_number}}
-          run: |
-            docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-            docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          uses: docker/build-push-action@v2
+          with:
+            context: .
+            push: true
+            tags: app_repo/node-app:latest
