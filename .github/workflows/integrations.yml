@@ -1,4 +1,4 @@
-name: Build node.js app
+name: CICD-nodejs
 on:
     push:
         branches:
