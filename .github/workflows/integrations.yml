@@ -22,6 +22,11 @@ jobs:
         - name: Build project assets
           run: npm run build
 
+    deploy-project:
+        name: Deploy project
+        runs-on: ubuntu-latest
+        needs: build-project
+        steps:
         - name: Configure AWS credentials
           uses: aws-actions/configure-aws-credentials@v3
           with:
@@ -58,15 +63,10 @@ jobs:
             container-name: ${{ env.CONTAINER_NAME }}
             image: ${{ steps.build-image.outputs.image }}
 
-    deploy-project:
-        name: Deploy project
-        runs-on: ubuntu-latest
-        needs: build-project
-        steps:
         - name: Deploy Amazon ECS task definition
           uses: aws-actions/amazon-ecs-deploy-task-definition@v1
           with:
-              task-definition: ${{ env.ECS_TD }}
+              task-definition: ${{ steps.task-def-1.outputs.task-definition }}
               service: ${{ env.ECS_SERVICE }}
               cluster: ${{ env.ECS_CLUSTER }}
               wait-for-service-stability: false
