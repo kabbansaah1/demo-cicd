@@ -30,11 +30,8 @@ jobs:
             mask-password: 'true'
         
         # build, tag, and push to ECR
-        - name: Build, tag, and push image to Amazon ECR
-          env:
-            REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-            REPOSITORY: app_repo
-            IMAGE_TAG: ${{ github.sha }}
-          run: |
-            docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-            docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        - name: Build and push
+          uses: docker/build-push-action@v4
+          with:
+            push: true
+            tags: user/app:latest
