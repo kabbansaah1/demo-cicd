@@ -1,5 +1,8 @@
 name: Build node.js app
-on: push
+on:
+    push:
+        branches:
+            - main
 jobs:
     build-project:
         name: Build project
