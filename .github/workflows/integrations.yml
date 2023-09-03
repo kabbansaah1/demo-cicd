@@ -37,6 +37,6 @@ jobs:
             IMAGE_TAG_LATEST: latest
             IMAGE_TAG_RUN_NUMBER: ${{ github.run_number }}
           run: |
-            docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+            docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER .
             docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST
             docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER
