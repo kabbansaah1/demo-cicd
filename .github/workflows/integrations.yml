@@ -11,18 +11,17 @@ env:
   CONTAINER_NAME: app
   ECS_SERVICE: app_service
   ECS_TD: .github/workflows/task-definition.json
-
+  REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  REPOSITORY: app_repo
+  IMAGE_TAG_LATEST: latest
+  IMAGE_TAG_RUN_NUMBER: ${{ github.run_number }}
+  
 jobs:
   build:
     name: Build node.js app
     runs-on: ubuntu-latest
 
     steps:
-      - name: Confirm Current Directory
-        run: |
-          echo "Current directory: $(pwd)"
-        # This step prints the current directory in the workflow log.
-
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -40,11 +39,6 @@ jobs:
       - build
 
     steps:
-      - name: Confirm Current Directory
-        run: |
-          echo "Current directory: $(pwd)"
-        # This step prints the current directory in the workflow log.
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -60,14 +54,9 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: app_repo
-          IMAGE_TAG_LATEST: latest
-          IMAGE_TAG_RUN_NUMBER: ${{ github.run_number }}
+        
         run: |
-          echo "Current directory before Docker build: $(pwd)"
-          docker build -f /Users/kobinaabban-saah/Desktop/githubactions/demo-cicd -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER 
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER
           echo "image=$REGISTRY/REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
@@ -80,11 +69,6 @@ jobs:
       - release
 
     steps:
-      - name: Confirm Current Directory
-        run: |
-          echo "Current directory: $(pwd)"
-        # This step prints the current directory in the workflow log.
-
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def-1
         uses: aws-actions/amazon-ecs-render-task-definition@v1
