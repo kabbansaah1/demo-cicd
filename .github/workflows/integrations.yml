@@ -10,12 +10,18 @@ env:
   ECS_SERVICE: app_service
   ECS_TD: .github/workflows/task-definition.json
 
-
 jobs:
-    deploy-project:
-        name: Deploy project
+    build-project:
+        name: Build project
         runs-on: ubuntu-latest
         steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+        - name: Install NPM dependencies
+          run: npm install
+        - name: Build project assets
+          run: npm run build
+
         - name: Configure AWS credentials
           uses: aws-actions/configure-aws-credentials@v3
           with:
@@ -43,7 +49,6 @@ jobs:
             docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST
             docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER
             echo "image=$REGISTRY/REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
         - name: Fill in the new image ID in the Amazon ECS task definition
           id: task-def-1
           uses: aws-actions/amazon-ecs-render-task-definition@v1
