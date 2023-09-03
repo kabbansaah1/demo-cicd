@@ -18,6 +18,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Confirm Current Directory
+        run: |
+          echo "Current directory: $(pwd)"
+        # This step prints the current directory in the workflow log.
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -35,6 +40,11 @@ jobs:
       - build
 
     steps:
+      - name: Confirm Current Directory
+        run: |
+          echo "Current directory: $(pwd)"
+        # This step prints the current directory in the workflow log.
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -56,6 +66,7 @@ jobs:
           IMAGE_TAG_LATEST: latest
           IMAGE_TAG_RUN_NUMBER: ${{ github.run_number }}
         run: |
+          echo "Current directory before Docker build: $(pwd)"
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER
@@ -69,6 +80,11 @@ jobs:
       - release
 
     steps:
+      - name: Confirm Current Directory
+        run: |
+          echo "Current directory: $(pwd)"
+        # This step prints the current directory in the workflow log.
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def-1
         uses: aws-actions/amazon-ecs-render-task-definition@v1
