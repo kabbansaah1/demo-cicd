@@ -34,7 +34,7 @@ jobs:
           env:
             REGISTRY: ${{ steps.login-ecr.outputs.registry }}
             REPOSITORY: app_repo
-            IMAGE_TAG: app_repo/nodeapp:latest
+            IMAGE_TAG: nodejs_app
           run: |
             docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
             docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
