@@ -12,6 +12,7 @@ env:
   CONTAINER_NAME: app
   ECS_SERVICE: app_service
   ECS_TD: .github/workflows/task-definition.json
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }} # Add your AWS Account ID to GitHub Secrets
 
 jobs:
   build-and-push:
