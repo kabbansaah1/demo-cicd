@@ -1,9 +1,9 @@
 {
-    "family": "my-nodejs-app", // Replace with your desired family name
+    "family": "my-nodejs-app", 
     "containerDefinitions": [
       {
         "name": "my-nodejs-app",
-        "image": "893688252992.dkr.ecr.us-east-1.amazonaws.com/my-nodejs-app", // Replace with the ECR image URL after it's built and pushed
+        "image": "893688252992.dkr.ecr.us-east-1.amazonaws.com/my-nodejs-app", 
         "memory": 512,
         "cpu": 256,
         "essential": true,
@@ -17,7 +17,7 @@
     ],
     "networkMode": "awsvpc",
     "requiresCompatibilities": ["FARGATE"],
-    "executionRoleArn": "arn:aws:iam::893688252992:role/ecs_task_execution_role", // Replace with the ARN of your ECS task execution role
+    "executionRoleArn": "arn:aws:iam::893688252992:role/ecs_task_execution_role", 
     "cpu": "256", // Define the CPU units
     "memory": "512", // Define the memory in MiB
     "volumes": [],
