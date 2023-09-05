@@ -3,7 +3,7 @@
     "containerDefinitions": [
       {
         "name": "my-nodejs-app",
-        "image": "893688252992.dkr.ecr.us-east-1.amazonaws.com/my-nodejs-app", 
+        "image": "893688252992.dkr.ecr.us-east-1.amazonaws.com/my-nodejs-app:latest", 
         "memory": 512,
         "cpu": 256,
         "essential": true,
