@@ -48,6 +48,10 @@ jobs:
           task-definition: ${{ env.ECS_TD }}
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
+      - name: Debugging
+        run: |
+          echo "AWS_REGION: $AWS_REGION"
+          echo "ECS_CLUSTER: $ECS_CLUSTER"
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
