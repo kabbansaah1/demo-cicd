@@ -41,11 +41,10 @@ jobs:
         id: build-image
         env:
           REGISTRY: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
-          REPOSITORY: ${{ env.ECR_REPOSITORY }}
           IMAGE_TAG_LATEST: latest
           IMAGE_TAG_RUN_NUMBER: ${{ env.RUN_NUMBER }}
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER
-          echo "image=$REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER" >> $GITHUB_ENV
+          docker build -t $REGISTRY/$${{ env.ECR_REPOSITORY }}:$IMAGE_TAG_LATEST -t $REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG_RUN_NUMBER .
+          docker push $REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG_LATEST
+          docker push $REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG_RUN_NUMBER
+          echo "image=$REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG_RUN_NUMBER" >> $GITHUB_ENV
