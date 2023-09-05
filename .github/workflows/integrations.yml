@@ -8,10 +8,7 @@ on:
 env:
   AWS_REGION: us-east-1 # Change to your desired AWS region (the region where your ECR is created)
   ECR_REPOSITORY: my-nodejs-app # Replace with the name of your ECR repository
-  ECS_CLUSTER: my-ecs-cluster
   CONTAINER_NAME: my-nodejs-app
-  ECS_SERVICE: my-nodejs-app-service
-  ECS_TD: .github/workflows/task-definition.json
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }} # Add your AWS Account ID to GitHub Secrets
 
 jobs:
@@ -52,17 +49,3 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER
           echo "image=$REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER" >> $GITHUB_ENV
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ env.ECS_TD }}
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ env.ECS_TD }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: false
