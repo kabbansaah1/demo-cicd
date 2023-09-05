@@ -21,7 +21,11 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: Set GitHub run number
+        id: set_run_number
+        run: echo "RUN_NUMBER=$(echo $GITHUB_RUN_ID)" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -37,21 +41,24 @@ jobs:
           region: ${{ env.AWS_REGION }}
 
       - name: Build, tag, and push Docker image to Amazon ECR
+        id: build-image
+        env:
+          REGISTRY: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG_LATEST: latest
+          IMAGE_TAG_RUN_NUMBER: ${{ env.RUN_NUMBER }}
         run: |
-          docker build -t ${{ env.ECR_REPOSITORY }}:latest .
-          docker tag ${{ env.ECR_REPOSITORY }}:latest ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
-          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST -t $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_LATEST
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER
+          echo "image=$REGISTRY/$REPOSITORY:$IMAGE_TAG_RUN_NUMBER" >> $GITHUB_ENV
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TD }}
           container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
-      - name: Debugging
-        run: |
-          echo "AWS_REGION: $AWS_REGION"
-          echo "ECS_CLUSTER: $ECS_CLUSTER"
+          image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
