@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: my-nodejs-app
-        image: ${{ env.ECR_REPO_URI }}:latest
+        image: ${{ env.ECR_REPO_URI }}:
         ports:
         - containerPort: 80
 ---
