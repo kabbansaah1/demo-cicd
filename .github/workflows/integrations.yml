@@ -72,7 +72,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add deployment.yaml
+          git add deployment.yml
           git commit -m "Update container image tag to latest"
           git push
         env:
