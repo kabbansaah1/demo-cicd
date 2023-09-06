@@ -75,4 +75,6 @@ jobs:
           git add deployment.yaml
           git commit -m "Update container image tag to latest"
           git push
-
+        env:
+          GITHUB_REF: ${{ github.ref }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
